@@ -4,9 +4,13 @@ import mongoose from 'mongoose';
 import * as dotenv from "dotenv";
 import Movie from "../models/MovieSchema";
 import { v4 as uuidv4 } from 'uuid';
+// @ts-ignore
+import cors from 'cors';
 dotenv.config();
 
 const app = express();
+
+app.use(cors());
 
 const mongoDB = mongoose.connect(process.env.mongoURL, {
     useUnifiedTopology: true,
@@ -28,7 +32,6 @@ app.use(bodyParser.json({
     }
 }));
 
-// @Create one movie
 app.post('/movie', async (req, res) => {
     const movie = new Movie();
     movie.id = uuidv4();
@@ -40,13 +43,11 @@ app.post('/movie', async (req, res) => {
     res.send(movie);
 })
 
-// @Get all movies
  app.get('/movies', async (req,res) => {
     const movies = await Movie.find();
     res.send(movies);
 });
 
-// @Get all movies by selected year
 app.get('/movies/year/:year', async (req,res) => {
     const movie = await Movie.find({
             year: +req.params.year
@@ -58,7 +59,6 @@ app.get('/movies/year/:year', async (req,res) => {
     }
 });
 
-// @Get all movies by selected genre
 app.get('/movies/genre/:genre', async  ( req, res) => {
     const movie = await Movie.find({
             genre: req.params.genre
@@ -108,8 +108,6 @@ app.get('/movies/filter', async (req,res) => {
         res.status(500).send({message: e})
     }
 });
-
-
 
 export {app};
 
